@@ -1,0 +1,51 @@
+	Config { font = "xft: JetBrainsMono Nerd Font-11"
+       , additionalFonts = ["xft:weathericons-regular-webfont -11",
+			    "xft:fontawesome-webfot-11",
+			    "xft:JetBrainsMono Nerd Font:size=8"]
+       , borderColor = "#000000"
+       , border = NoBorder
+       , bgColor = "#2E3440"
+       , fgColor = "#E5E9F0"
+       , alpha = 0
+       , position = Top 
+       , textOffset = -1
+       , iconOffset = -1
+       , lowerOnStart = True
+       , pickBroadest = False
+       , persistent = False
+       , hideOnStart = False
+       , iconRoot = "home/mental/.xmonad/xpm/" --default "."
+       , allDesktops = True
+       , overrideRedirect = True
+       , commands = [ 
+	Run WeatherX "RPLB"
+        [ ("clear", "<fn=1>\xF00D</fn>")
+        , ("sunny", "<fn=1>\xF00D</fn>")
+        ,("mostly clear", "<fn=1>\xF00C</fn>")
+        , ("mostly sunny", "<fn=1>\xF00C</fn>")
+        , ("partly sunny", "<fn=1>\xF07D</fn>")
+        , ("fair", "🌑")
+        , ("cloudy","<fn=1>\xF013</fn>")
+        , ("overcast","<fn=1>\xF003</fn>")
+        , ("partly cloudy", "<fn=1>\xF002</fn>")
+        , ("mostly cloudy", "<fn=1>\xF017</fn>")
+        , ("considerable cloudiness", "<fn=1>\xF06B</fn>")]
+        ["-t", "<fn=1><skyConditionS></fn> <tempC>°C "
+        , "-L","10", "-H", "25" 
+        , "--high", "#BF616A", "--normal","#EBCB8B","--low", "#5E81AC"]
+        18000,
+                     Run DynNetwork ["--template", "<tx> \xF6D9 <rx> \xFA51<fn=3> kb/s</fn>", "-L","20000","-H","50000", "--low","#BF616A", "--normal","#EBCB8B","--high","#A3BE8C"] 10
+                    , Run Cpu ["--template","\xF85A <total>%", "-L","-1","-H","50",
+                               "--normal","#A3BE8C","--high","#BF616A"] 10
+		    , Run CoreTemp ["--template", "\xFC27 <core0>|core1>C",
+				    "-L", "40", "-H", "60","--normal","#A3BE8C","--high","#BF616A"] 10
+
+                    , Run Memory ["-t","\xE705 <usedratio>%", "-L", "-1", "-H", "70",
+			"--low", "#A3BE8C", "--normal","#EBCB8B", "--high", "#BF616A"] 10
+                    , Run Date "\xF5EF %H:%M-%b%_d,%Y-%a" "date" 10
+		    , Run StdinReader 
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader%}{ %dynnetwork% | %cpu% | %memory% | %date% | %RPLB%"
+       }
