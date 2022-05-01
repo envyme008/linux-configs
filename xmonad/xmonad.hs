@@ -60,12 +60,12 @@ myModMask       = mod4Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["1","2","3","4","5"]
+myWorkspaces    = ["term","web","video","game","etc"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
 myNormalBorderColor  = "#000000"
-myFocusedBorderColor = "#A3BE8C"
+myFocusedBorderColor = nordBlue
 
 -- Fonts
 --
@@ -74,10 +74,11 @@ myFont = "xft:JetBrains Mono Nerd Font :regular:size = 11"
 
 -- Workspaces
 --
-workspaceActive,workspaceInactive :: String
+workspaceActive,workspaceInactive,workSpaceSeparator :: String
 
 workspaceActive = "\xf62e"
 workspaceInactive = "\xf62f"
+workSpaceSeparator = " \xe285 "
 --Window Count
 --
 windowCount :: X (Maybe String)
@@ -171,13 +172,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
     -- mute button
-    , ((modm .|. shiftMask, xK_0), spawn "amixer -D pulse sset Master 15%+")
+    , ((modm .|. shiftMask, xK_0), spawn "amixer -D pulse sset Master toggle")
 
     -- volumeup button
-    , ((modm .|. shiftMask, xK_minus), spawn "pulse-volume.sh increase")
+    , ((modm .|. shiftMask, xK_minus), spawn "amixer -D pulse sset Master 5%-")
 
     -- volumedown button
-    , ((modm .|. shiftMask, xK_equal), spawn "pulse-volume.sh decrease")
+    , ((modm .|. shiftMask, xK_equal), spawn "amixer -D pulse sset Master 5%+")
 
     ]
     ++
@@ -285,17 +286,17 @@ myEventHook = mempty
 myLogHook h = dynamicLogWithPP xmobarPP { 
 ppOutput = hPutStrLn h,
 ppOrder = \(ws:l:t:ex) -> [ws]++ex++[t], 
-ppSep = " | ",
-ppCurrent = xmobarColor nordGreen "",
-ppHidden = xmobarColor nordYellow "" . wrap "" "<fc=nordYellow><fn=5>*</fn></fc>",
+ppSep = workSpaceSeparator,
+ppCurrent = xmobarColor nordGreen "" .wrap "[" "]",
+ppHidden = xmobarColor nordYellow "" .wrap "" "<fn=3>*</fn>",
 ppHiddenNoWindows = xmobarColor nordFG "",
-ppTitle =  xmobarColor nordYellow "" . shorten 20,
+ppTitle =  xmobarColor nordGreen "" . shorten 20,
 ppExtras = [windowCount]
 } 
 --ppLayout = wrap "(<fc=#e4b63c>" "</fc>)",
 --ppVisible = xmobarColor "#c792ea" "",
 --ppCurrent = xmobarColor "#c792ea" "" .wrap "<box type=Bottom width=2 mb=2 color=#c792ea>" "</box>",
---ppHidden = xmobarColor "#82AAFF" "",
+--ppHidden = xmobarColor "#82AAFF" "",.wrap "" "<fc=nordYellow><fn=5>*</fn></fc>"
 --ppTitle = xmobarColor "#b3afc2" "" . shorten 18,
 --ppTitleSanitize = const "", 
 --ppSep = "<fc=#666666>|</fc>",
@@ -312,6 +313,7 @@ ppExtras = [windowCount]
 myStartupHook = do
        spawnOnce "nitrogen --restore &"
        spawnOnce "picom &"
+       spawnOnce "neofetch"
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
@@ -355,7 +357,7 @@ help = unlines ["The default modifier key is 'alt'. Default keybindings:",
     "mod-Shift-Enter  Launch xterminal",
     "mod-p            Launch dmenu",
     "mod-Shift-p      Launch gmrun",
-    "mod-Shift-c      Close/kill the focused window",
+    "mod-c      Close/kill the focused window",
     "mod-Space        Rotate through the available layout algorithms",
     "mod-Shift-Space  Reset the layouts on the current workSpace to default",
     "mod-n            Resize/refresh viewed windows to the correct size",
