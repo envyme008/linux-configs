@@ -1,6 +1,6 @@
 	Config { font = "xft: JetBrainsMono Nerd Font-11"
        , additionalFonts = ["xft:weathericons-regular-webfont -11",
-			    "xft:fontawesome-webfot-11",
+			    "xft:fontawesome-webfont-11",
 			    "xft:JetBrainsMono Nerd Font:size=8"]
        , borderColor = "#000000"
        , border = NoBorder
@@ -31,22 +31,17 @@
         , ("mostly cloudy", "<fn=1>\xF017</fn>")
         , ("considerable cloudiness", "<fn=1>\xF06B</fn>")]
         ["-t", "<fn=1><skyConditionS></fn> <tempC>°C "
-        , "-L","10", "-H", "25" 
-        , "--high", "#BF616A", "--normal","#EBCB8B","--low", "#5E81AC"]
-        18000,
-                     Run DynNetwork ["--template", "<tx> \xF6D9 <rx> \xFA51<fn=3> kb/s</fn>", "-L","20000","-H","50000", "--low","#BF616A", "--normal","#EBCB8B","--high","#A3BE8C"] 10
-                    , Run Cpu ["--template","\xF85A <total>%", "-L","-1","-H","50",
-                               "--normal","#A3BE8C","--high","#BF616A"] 10
-		    , Run CoreTemp ["--template", "\xFC27 <core0>|core1>C",
-				    "-L", "40", "-H", "60","--normal","#A3BE8C","--high","#BF616A"] 10
+        , "-L","10", "-H", "25" , "--high", "#BF616A", "--normal","#EBCB8B","--low", "#5E81AC"] 18000, Run DynNetwork ["--template", "<tx> \xF6D9 <rx> \xFA51<fn=3> kb/s</fn>", "-L","20000","-H","50000", "--low","#BF616A", "--normal","#EBCB8B","--high","#A3BE8C"] 10 , Run Cpu ["--template","\xF85A <total>%", "-L","-1","-H","50", "--normal","#A3BE8C","--high","#BF616A"] 10 , Run CoreTemp ["--template", "\xFC27 <core0>|core1>C", "-L", "40", "-H", "60","--normal","#A3BE8C","--high","#BF616A"] 10
 
                     , Run Memory ["-t","\xE705 <usedratio>%", "-L", "-1", "-H", "70",
 			"--low", "#A3BE8C", "--normal","#EBCB8B", "--high", "#BF616A"] 10
-                    , Run Date "\xF5EF %H:%M-%b%_d,%Y-%a" "date" 10
-		    , Run Com "sh" ["-c", "~/.xmonad/get-volume.sh"] "myVol" 10 
+                    , Run Date "\xF5EF %HH:%MM-%b%_d,%Y-%a" "date" 10
+		    , Run Com "sh" ["-c",  ". ~/.xmonad/get-volume.sh"] "myVol" 10 
+		    , Run Volume "pulse" "Master" ["-t","\xF026 <volume>%"] 5 
+		    , Run Locks 
 		    , Run StdinReader 
-                    ]
+		    ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader%}{ %dynnetwork% | %cpu% | %memory% | %date% | %myVol% | %RPLB%"
+       , template = "%StdinReader%}{<fc=#BF616A>%locks%</fc> %dynnetwork% | %cpu% | %memory% | %date% | %pulse:Master% | %RPLB%"
        }

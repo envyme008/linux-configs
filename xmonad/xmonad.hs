@@ -42,7 +42,7 @@ myClickJustFocuses = False
 
 -- Width of the window border in pixels.
 --
-myBorderWidth   = 8
+myBorderWidth   = 6
 
 -- modMask lets you specify which modkey you want to use. The default
 -- is mod1Mask ("left alt").  You may also consider using mod3Mask
@@ -60,12 +60,12 @@ myModMask       = mod4Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["term","web","video","game","etc"]
+myWorkspaces    = ["term","web","code","game","etc"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
 myNormalBorderColor  = "#000000"
-myFocusedBorderColor = nordBlue
+myFocusedBorderColor = nordBG
 
 -- Fonts
 --
@@ -95,6 +95,7 @@ nordYellow = "#EBCB8B"
 nordGreen = "#A3BE8C"
 nordPurple = "#B48EAD"
 nordBlue = "#5E81AC"
+
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
@@ -104,10 +105,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
 
     -- launch dmenu
-    , ((modm,               xK_p     ), spawn "dmenu_run")
+    , ((modm,               xK_p     ), spawn "rofi -show drun -show-icons -modi drun,run")
 
     -- launch gmrun
-    , ((modm .|. shiftMask, xK_p     ), spawn "gmrun")
+    --, ((modm .|. shiftMask, xK_p     ), spawn "rofi -show file-browser-extended")
 
     -- close focused window
     , ((modm,               xK_c     ), kill)
@@ -170,15 +171,17 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_q     ), spawn "xmonad --recompile; killall xmobar;  xmonad --restart")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
-    , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
-    -- mute button
+    , ((modm .|. shiftMask, xK_slash ), spawn ("rofi -e \"" ++ help ++ "\" -location 2" ))
+    --, ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -center -file -"))
+
+    -- mute volume 
     , ((modm .|. shiftMask, xK_0), spawn "amixer -D pulse sset Master toggle")
 
-    -- volumeup button
-    , ((modm .|. shiftMask, xK_minus), spawn "amixer -D pulse sset Master 5%-")
+    -- volume up 
+    , ((modm .|. shiftMask, xK_minus), spawn "amixer -D pulse sset Master 2.5%-")
 
-    -- volumedown button
-    , ((modm .|. shiftMask, xK_equal), spawn "amixer -D pulse sset Master 5%+")
+    -- volume down 
+    , ((modm .|. shiftMask, xK_equal), spawn "amixer -D pulse sset Master 2.5%+")
 
     ]
     ++
@@ -345,23 +348,22 @@ main = do
         layoutHook         = myLayout,
         manageHook         = myManageHook,
         handleEventHook    = myEventHook,
-      	logHook            = myLogHook xmproc, 
+        logHook            = myLogHook xmproc, 
         startupHook        = myStartupHook
     }
 
 -- | Finally, a copy of the default bindings in simple textual tabular format.
 help :: String
-help = unlines ["The default modifier key is 'alt'. Default keybindings:",
+help = unlines ["The default modifier key is 'win'. Default keybindings:",
     "",
     "-- launching and killing programs",
-    "mod-Shift-Enter  Launch xterminal",
-    "mod-p            Launch dmenu",
+    "mod-Shift-Enter  Launch terminal",
+    "mod-p            Launch rofi",
     "mod-Shift-p      Launch gmrun",
     "mod-c      Close/kill the focused window",
     "mod-Space        Rotate through the available layout algorithms",
     "mod-Shift-Space  Reset the layouts on the current workSpace to default",
     "mod-n            Resize/refresh viewed windows to the correct size",
-    "",
     "-- move focus up or down the window stack",
     "mod-Tab        Move focus to the next window",
     "mod-Shift-Tab  Move focus to the previous window",
