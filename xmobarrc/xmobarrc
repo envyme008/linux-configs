@@ -35,7 +35,7 @@
 
                     , Run Memory ["-t","\xE705 <usedratio>%", "-L", "-1", "-H", "70",
 			"--low", "#A3BE8C", "--normal","#EBCB8B", "--high", "#BF616A"] 10
-                    , Run Date "\xF5EF %HH:%MM-%b%_d,%Y-%a" "date" 10
+                    , Run Date "\xF5EF %a, %-l:%M%p - %b %_d,%Y" "date" 10
 		    , Run Com "sh" ["-c",  ". ~/.xmonad/get-volume.sh"] "myVol" 10 
 		    , Run Volume "pulse" "Master" ["-t","\xF026 <volume>%"] 5 
 		    , Run Locks 

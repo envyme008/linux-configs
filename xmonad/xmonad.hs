@@ -16,6 +16,7 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
 import XMonad.Util.SpawnOnce
+import XMonad.Actions.SpawnOn
 import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run
 import XMonad.Util.NamedScratchpad
@@ -65,7 +66,7 @@ myWorkspaces    = ["term","web","code","game","etc"]
 -- Border colors for unfocused and focused windows, respectively.
 --
 myNormalBorderColor  = "#000000"
-myFocusedBorderColor = nordBG
+myFocusedBorderColor = nordInactive
 
 -- Fonts
 --
@@ -86,9 +87,10 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 --Nord Color Theme
 --
-nordBG,nordFG,nordRed,nordOrange,nordYellow,nordGreen,nordPurple,nordBlue :: String
+nordBG,nordFG,nordInactive,nordRed,nordOrange,nordYellow,nordGreen,nordPurple,nordBlue :: String
 nordBG = "#2E3440"
 nordFG = "#ECEFF4"
+nordInactive = "#4C566A"
 nordRed = "#BF616A"
 nordOrange = "#D08770"
 nordYellow = "#EBCB8B"
@@ -292,7 +294,7 @@ ppOrder = \(ws:l:t:ex) -> [ws]++ex++[t],
 ppSep = workSpaceSeparator,
 ppCurrent = xmobarColor nordGreen "" .wrap "[" "]",
 ppHidden = xmobarColor nordYellow "" .wrap "" "<fn=3>*</fn>",
-ppHiddenNoWindows = xmobarColor nordFG "",
+ppHiddenNoWindows = xmobarColor nordInactive "",
 ppTitle =  xmobarColor nordGreen "" . shorten 20,
 ppExtras = [windowCount]
 } 
@@ -315,9 +317,13 @@ ppExtras = [windowCount]
 -- bY DEFAult, do nothing.
 myStartupHook = do
        spawnOnce "nitrogen --restore &"
-       spawnOnce "picom &"
-       spawnOnce "neofetch"
-
+       spawnOnce "picom"
+--picom 
+--       spawnOn "term" "kitty -e ranger &"
+--       spawnOn "term" "kitty -e cmatrix &"
+--       spawnOn "term" "kitty -e tty-clock -x -t -s -c &"
+--       spawnOn "term" "kitty -e bash /usr/bin/bonsai.sh -L 25 -T -l -i &"
+--       spawnOn "web" "firefox"
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
 
@@ -346,7 +352,7 @@ main = do
 
       -- hooks, layouts
         layoutHook         = myLayout,
-        manageHook         = myManageHook,
+        manageHook         = manageSpawn <+> myManageHook,
         handleEventHook    = myEventHook,
         logHook            = myLogHook xmproc, 
         startupHook        = myStartupHook
