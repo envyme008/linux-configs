@@ -1,12 +1,3 @@
---
--- xmonad example config file.
---
--- A template showing all available configuration hooks,
--- and how to override the defaults in your own xmonad.hs conf file.
---
--- Normally, you'd only override those defaults you care about.
---
-
 import XMonad
 import Data.Monoid
 import System.Exit
@@ -36,7 +27,7 @@ import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat, doCenterFloat)
 import XMonad.Hooks.ServerMode
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.WorkspaceHistory
-import XMonad.Hooks.ManageDocks(avoidStruts, docksEventHook, manageDocks, ToggleStruts(..))
+import XMonad.Hooks.ManageDocks (avoidStruts, docksEventHook, manageDocks, ToggleStruts(..),docks)
 
 -- Layouts
 import XMonad.Layout.Accordion
@@ -252,6 +243,15 @@ mySpacing' i = spacingRaw True (Border i i i i) True (Border i i i i) True
 -- Defining a bunch of layouts, many that I don't use.
 -- limitWindows n sets maximum number of windows displayed for layout.
 -- mySpacing n sets the gap size around the windows.
+grid     = renamed [Replace "grid"]
+           $ smartBorders
+           $ windowNavigation
+           $ addTabs shrinkText myTabTheme
+           $ subLayout [] (smartBorders Simplest)
+           $ limitWindows 12
+           $ mySpacing 4
+           $ mkToggle (single MIRROR)
+           $ Grid (16/10)
 tall     = renamed [Replace "tall"]
            $ smartBorders
            $ windowNavigation
@@ -260,7 +260,7 @@ tall     = renamed [Replace "tall"]
            $ limitWindows 12
            $ mySpacing 4
            $ ResizableTall 1 (3/100) (1/2) []
-magnify  = renamed [Replace "magnify"]
+magnifyy  = renamed [Replace "magnify"]
            $ smartBorders
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
@@ -278,15 +278,6 @@ monocle  = renamed [Replace "monocle"]
 floats   = renamed [Replace "floats"]
            $ smartBorders
            $ limitWindows 20 simplestFloat
-grid     = renamed [Replace "grid"]
-           $ smartBorders
-           $ windowNavigation
-           $ addTabs shrinkText myTabTheme
-           $ subLayout [] (smartBorders Simplest)
-           $ limitWindows 12
-           $ mySpacing 4
-           $ mkToggle (single MIRROR)
-           $ Grid (16/10)
 spirals  = renamed [Replace "spirals"]
            $ smartBorders
            $ windowNavigation
@@ -334,12 +325,12 @@ myTabTheme = def { fontName            = myFont
 myLayout = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts floats
                $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
-               myDefaultLayout =     withBorder myBorderWidth tall
-                                 ||| magnify
+               myDefaultLayout =     withBorder myBorderWidth grid
+                                 ||| tall
                                  ||| noBorders monocle
                                  ||| floats
                                  ||| noBorders tabs
-                                 ||| grid
+                                 ||| magnifyy
                                  ||| spirals
  --                                ||| threeRow
  --                                ||| wideAccordion
@@ -367,6 +358,7 @@ myManageHook = composeAll
     , className =? "Steam"          --> doFloat
     , className =? "steam"          --> doFullFloat -- bigpicture-mode
     , className =? "MPlayer"        --> doFloat
+    , className =? "Vlc"            --> doFullFloat 
     , (isFullscreen --> doFullFloat)] 
 ------------------------------------------------------------------------
 -- Event handling
@@ -377,7 +369,7 @@ myManageHook = composeAll
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = ewmhDesktopsEventHook
+myEventHook = ewmh
 
 ------------------------------------------------------------------------
 -- Status bars and logging
@@ -429,7 +421,7 @@ myStartupHook = do
 --
 main = do 
        xmproc <- spawnPipe "xmobar $HOME/.config/xmobar/xmobarrc"
-       xmonad $ ewmh def{ 
+       xmonad $ docks $ ewmh def{ 
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
@@ -450,13 +442,10 @@ main = do
         mouseBindings      = myMouseBindings,
 
       -- hooks, layouts
-        layoutHook         = myLayout,
+        startupHook        = myStartupHook,
+	layoutHook         = myLayout,
         manageHook         = myManageHook <+> manageDocks,
-      --manageHook         = manageSpawn <+> myManageHook <+> manageHook desktopConfig,
-      --handleEventHook    = myEventHook,
-        handleEventHook    = docksEventHook, 
-	logHook            = myLogHook xmproc, 
-        startupHook        = myStartupHook
+        logHook            = myLogHook xmproc
     }
 
 -- | Finally, a copy of the default bindings in simple textual tabular format.
