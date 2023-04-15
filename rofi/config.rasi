@@ -1,0 +1,6 @@
+
+configuration {
+  font : "JetBrainsMono Nerd Font 11";
+  terminal : "kitty";
+}
+@theme "/home/mental/.config/rofi/themes/nord.rasi"
